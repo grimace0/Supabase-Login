@@ -1,4 +1,3 @@
-
 <?php
 
 include('db.php');
@@ -14,10 +13,13 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $errors[] = "Username is required";
     }
 
-    $result = pg_query_params($conn, 'SELECT username FROM public.users WHERE username = $1', [$username]);
+    $stmt = mysqli_prepare($conn, 'SELECT username FROM users WHERE username = ?');
+    mysqli_stmt_bind_param($stmt, 's', $username);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
 
     if ($result) {
-        if (pg_fetch_assoc($result)) {
+        if (mysqli_fetch_assoc($result)) {
             $errors[] = "Username already exist";
         }
     } else {
@@ -35,11 +37,9 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $passwordHash = password_hash($password, PASSWORD_BCRYPT);
 
     if (empty($errors)) {
-        $insert = pg_query_params(
-            $conn,
-            'INSERT INTO public.users (username, password) VALUES ($1, $2)',
-            [$username, $passwordHash]
-        );
+         $stmt2 = mysqli_prepare($conn, 'INSERT INTO users (username, password) VALUES (?, ?)');
+        mysqli_stmt_bind_param($stmt2, 'ss', $username, $passwordHash);
+        $insert = mysqli_stmt_execute($stmt2);
 
         if ($insert) {
             echo "Registered Successfully";

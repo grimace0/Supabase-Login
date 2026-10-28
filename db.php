@@ -1,17 +1,17 @@
 <?php
 
-$dbHost = 'aws-0-ap-southeast-1.pooler.supabase.com';
-$dbUser = 'postgres.xnovgtceysyapbyyfrjc';
-$dbPassword = 'Progamer2005aw';
+$dbHost = 'localhost';
+$dbUser = 'root';
+$dbPassword = '';
+$database = 'login_db';
+$dbPort = 3306;
 
 
-
-$conn = pg_connect("host=$dbHost port=5432 dbname=postgres user=$dbUser password=$dbPassword sslmode=require");
+$conn = mysqli_connect($dbHost, $dbUser, $dbPassword, $database, $dbPort);
 
 if (!$conn) {
-    exit('Database connection failed.');
+   
+    die('Database connection failed: ' . mysqli_connect_error());
 }
-
-
 
 ?>
